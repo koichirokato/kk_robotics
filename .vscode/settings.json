@@ -1,0 +1,7 @@
+{
+    "python-envs.pythonProjects": [],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/core/python"
+    ],
+    "ty.interpreter": ["{workspaceFolder}/.venv/bin/python3"]
+}
