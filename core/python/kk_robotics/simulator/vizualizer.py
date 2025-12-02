@@ -1,6 +1,8 @@
 import math
 import tkinter as tk
 
+from kk_robotics import pose_util
+
 
 class SimulatorVisualizer:
     def __init__(self, size: int, scale: float = 5.0) -> None:
@@ -18,7 +20,7 @@ class SimulatorVisualizer:
         self._sensor_line_ids: list[int] = []
 
         self._robot_radius = 2.0
-        self._robot_pose = [0.0, 0.0, 0.0]
+        self._robot_pose = pose_util.Pose2D(0.0, 0.0, 0.0)
 
     def draw_world(self, obstacles: set[tuple[int, int]]) -> None:
         for x, y in obstacles:
@@ -34,7 +36,7 @@ class SimulatorVisualizer:
         for y in range(0, height, scale):
             self._canvas.create_line(0, y, width * self._scale, y, fill="light gray")
 
-    def set_robot_pose(self, pose: tuple[float, float, float]) -> None:
+    def set_robot_pose(self, pose: pose_util.Pose2D) -> None:
         self._robot_pose = pose
 
     def update(self) -> None:
@@ -45,9 +47,9 @@ class SimulatorVisualizer:
         return x * self._scale, (self._size - y) * self._scale
 
     def _draw_robot(self) -> None:
-        x = self._robot_pose[0]
-        y = self._robot_pose[1]
-        theta = self._robot_pose[2]
+        x = self._robot_pose.x
+        y = self._robot_pose.y
+        theta = self._robot_pose.theta
 
         xc, yc = self._convert_to_canvas_coodinate(x, y)
         r = self._robot_radius * self._scale

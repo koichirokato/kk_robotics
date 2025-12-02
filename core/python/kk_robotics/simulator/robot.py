@@ -1,13 +1,12 @@
 import math
 
+from kk_robotics import pose_util
 from kk_robotics.simulator import world
 
 
 class Robot:
     def __init__(self, x: float = 10.0, y: float = 10.0, theta: float = 0.0) -> None:
-        self._x = x
-        self._y = y
-        self._theta = theta
+        self._robot_pose = pose_util.Pose2D(x, y, theta)
         self._v = 0.0
         self._omega = 0.0
         self._radius = 0.5
@@ -17,18 +16,16 @@ class Robot:
         self._omega = angular
 
     def update(self, world: world.World, dt: float = 1.0) -> None:
-        self._theta += self._omega * dt
-        new_x = self._x + self._v * math.cos(self._theta) * dt
-        new_y = self._y + self._v * math.sin(self._theta) * dt
+        delta_pose = pose_util.Pose2D(self._v * dt, 0.0, self._omega * dt)
+        new_pose = self._robot_pose @ delta_pose
 
-        if not self._collides(new_x, new_y, world):
-            self._x = new_x
-            self._y = new_y
+        if not self._collides(new_pose.x, new_pose.y, world):
+            self._robot_pose = new_pose
         else:
             self._v = 0.0
 
-    def get_pose(self) -> tuple[float, float, float]:
-        return self._x, self._y, self._theta
+    def get_pose(self) -> pose_util.Pose2D:
+        return self._robot_pose
 
     def _collides(self, x: float, y: float, world: world.World) -> bool:
         r = int(math.ceil(self._radius))

@@ -1,5 +1,6 @@
 import numpy as np
 
+from kk_robotics import pose_util
 from kk_robotics.simulator import robot
 from kk_robotics.simulator import vizualizer
 from kk_robotics.simulator import world
@@ -21,7 +22,7 @@ class Simulator:
     def set_velocity(self, linear_velocity: float, angular_velocity: float) -> None:
         self._robot.set_velocity(linear_velocity, angular_velocity)
 
-    def get_pose(self) -> tuple[float, float, float]:
+    def get_pose(self) -> pose_util.Pose2D:
         return self._robot.get_pose()
 
     def get_world(self) -> np.ndarray:
