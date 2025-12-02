@@ -1,0 +1,11 @@
+[package]
+name = "kk_robotics_zenoh"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+kk_robotics = { path = "../../../core/rust" }
+serde_json = "1.0.145"
+tokio = { version = "1", features = ["full"] }
+zenoh = "0.7.0-rc"
+crossterm = "0.29.0"

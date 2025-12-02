@@ -18,7 +18,23 @@ class Robot:
         self._robot_pose = pose_util.Pose2D(x, y, theta)
         self._v = 0.0
         self._omega = 0.0
-        self._radius = 0.5
+        self._radius = 2.0
+
+        # name, relative position, sensor
+        self._sensors: list[SensorOnRobot] = []
+
+    @property
+    def sensors(self) -> list[SensorOnRobot]:
+        return self._sensors
+
+    def get_sensor(self, name: str) -> SensorOnRobot | None:
+        for sensor_on_robot in self._sensors:
+            if sensor_on_robot.name == name:
+                return sensor_on_robot
+        return None
+
+    def add_sensor(self, sensor_on_robot: SensorOnRobot) -> None:
+        self._sensors.append(sensor_on_robot)
 
         self._sensors: list[SensorOnRobot] = []
 

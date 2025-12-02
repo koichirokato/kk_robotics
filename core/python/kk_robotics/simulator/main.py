@@ -28,7 +28,7 @@ def main() -> None:
     robot_impl.add_sensor(
         robot.SensorOnRobot("front_lidar", pose_util.Pose2D(0.0, 0.0, 0.0), sensor_impl)
     )
-    vizualizer_impl = vizualizer.SimulatorVisualizer(size)
+    vizualizer_impl = vizualizer.Visualizer(size)
     simulator_impl = simulator.Simulator(world_impl, robot_impl, vizualizer_impl)
 
     for _ in range(10000):

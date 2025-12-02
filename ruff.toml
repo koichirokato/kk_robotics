@@ -1,0 +1,6 @@
+[lint]
+extend-select = ["I"]
+exclude = [".venv", "src/kk_slam/generated/**"]
+
+[lint.isort]
+force-single-line = true

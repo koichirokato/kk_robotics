@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from kk_robotics import pose_util
@@ -46,3 +48,28 @@ class Simulator:
                 # TODO: support other type
                 pass
         self._vizualizer.update()
+
+    @classmethod
+    def create_default(cls, size: int = 100) -> "Simulator":
+        """Create a simulator with default robot and LiDAR"""
+        world_impl = world.World(size)
+        robot_impl = robot.Robot(10, 10, 0.0)
+
+        lidar_spec = sensor.LiDARSpecifications(
+            range_min=0.1,
+            range_max=10.0,
+            angle_min=math.radians(-45),
+            angle_max=math.radians(225),
+            angle_increment=math.radians(0.125),
+        )
+        lidar = sensor.LiDAR(lidar_spec)
+        robot_impl.add_sensor(
+            robot.SensorOnRobot(
+                name="front_lidar",
+                relative_pose=pose_util.Pose2D(0.0, 0.0, 0.0),
+                sensor=lidar,
+            )
+        )
+
+        vizualizer_impl = vizualizer.SimulatorVisualizer(size)
+        return cls(world_impl, robot_impl, vizualizer_impl)

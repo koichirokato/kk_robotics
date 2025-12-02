@@ -9,11 +9,11 @@ from kk_robotics.simulator import world
 class SimulatorVisualizer:
     def __init__(self, size: float, scale: float = 5.0) -> None:
         self._scale = scale
-        self._size = size
+        self._size = int(size)
 
         self._root = tk.Tk()
         self._root.title("2D Robot Simulator (Grid + LiDAR)")
-        size_px = int(size * scale)
+        size_px = int(size * scale) + 2
         self._canvas = tk.Canvas(self._root, width=size_px, height=size_px, bg="white")
         self._canvas.pack()
 
