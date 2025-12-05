@@ -2,6 +2,7 @@ import math
 import tkinter as tk
 
 from kk_robotics import pose_util
+from kk_robotics.simulator import sensor
 from kk_robotics.simulator import world
 
 
@@ -23,6 +24,9 @@ class SimulatorVisualizer:
         self._robot_radius = 2.0
         self._robot_pose = pose_util.Pose2D(0.0, 0.0, 0.0)
 
+        self._lidar_distances = []
+        self._lidar_specifications: sensor.LiDARSpecifications | None = None
+
     def draw_world(self, world_impl: world.World) -> None:
         for grid_x, grid_y in world_impl.obstacles():
             x, y = world_impl.grid_to_world(grid_x, grid_y)
@@ -41,8 +45,15 @@ class SimulatorVisualizer:
     def set_robot_pose(self, pose: pose_util.Pose2D) -> None:
         self._robot_pose = pose
 
+    def set_lidar_specifications(
+        self, distances: list[float], specifications: sensor.LiDARSpecifications
+    ) -> None:
+        self._lidar_distances = distances
+        self._lidar_specifications = specifications
+
     def update(self) -> None:
         self._draw_robot()
+        self._draw_lidar()
         self._root.update()
 
     def _convert_to_canvas_coodinate(self, x: float, y: float) -> tuple[float, float]:
@@ -71,3 +82,29 @@ class SimulatorVisualizer:
             )
         else:
             self._canvas.coords(self._robot_heading_canvas_id, xc, yc, hx, hy)
+
+    def _draw_lidar(self) -> None:
+        if self._lidar_specifications is None:
+            return
+        for line_id in self._sensor_line_ids:
+            self._canvas.delete(line_id)
+        self._sensor_line_ids.clear()
+
+        x = self._robot_pose.x
+        y = self._robot_pose.y
+        theta = self._robot_pose.theta
+        xc, yc = self._convert_to_canvas_coodinate(x, y)
+        for i, dist in enumerate(self._lidar_distances):
+            beam_angle = (
+                self._lidar_specifications.angle_min
+                + i * self._lidar_specifications.angle_increment
+            )
+            sensor_angle = theta + beam_angle - math.pi / 2
+            x_end = x + dist * math.cos(sensor_angle)
+            y_end = y + dist * math.sin(sensor_angle)
+
+            x_end_c, y_end_c = self._convert_to_canvas_coodinate(x_end, y_end)
+            line_id = self._canvas.create_line(
+                xc, yc, x_end_c, y_end_c, fill="red", dash=(1, 3), width=5
+            )
+            self._sensor_line_ids.append(line_id)

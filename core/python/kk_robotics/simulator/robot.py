@@ -1,7 +1,16 @@
+import dataclasses
 import math
 
 from kk_robotics import pose_util
+from kk_robotics.simulator import sensor
 from kk_robotics.simulator import world
+
+
+@dataclasses.dataclass
+class SensorOnRobot:
+    name: str
+    relative_pose: pose_util.Pose2D
+    sensor: sensor.SensorInterface
 
 
 class Robot:
@@ -11,9 +20,28 @@ class Robot:
         self._omega = 0.0
         self._radius = 0.5
 
+        self._sensors: list[SensorOnRobot] = []
+
+    @property
+    def sensors(self) -> list[SensorOnRobot]:
+        return self._sensors
+
+    def get_sensor(self, name: str) -> SensorOnRobot | None:
+        for sensor_on_robot in self._sensors:
+            if sensor_on_robot.name == name:
+                return sensor_on_robot
+        return None
+
+    def add_sensor(self, sensor_on_robot: SensorOnRobot) -> None:
+        self._sensors.append(sensor_on_robot)
+
     def set_velocity(self, linear: float, angular: float) -> None:
         self._v = linear
         self._omega = angular
+
+    def sense(self, world: world.World) -> None:
+        for sensor_on_robot in self._sensors:
+            sensor_on_robot.sensor.measure(self.get_pose(), world)
 
     def update(self, world: world.World, dt: float = 1.0) -> None:
         delta_pose = pose_util.Pose2D(self._v * dt, 0.0, self._omega * dt)
