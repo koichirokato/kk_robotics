@@ -8,7 +8,7 @@ from kk_robotics.simulator import world
 
 
 def main() -> None:
-    size = 100
+    size = 100.0
     world_impl = world.World(size)
     robot_impl = robot.Robot(10, 10, math.pi / 2)
     vizualizer_impl = vizualizer.SimulatorVisualizer(size)

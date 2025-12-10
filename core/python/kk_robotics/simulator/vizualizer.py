@@ -2,10 +2,11 @@ import math
 import tkinter as tk
 
 from kk_robotics import pose_util
+from kk_robotics.simulator import world
 
 
 class SimulatorVisualizer:
-    def __init__(self, size: int, scale: float = 5.0) -> None:
+    def __init__(self, size: float, scale: float = 5.0) -> None:
         self._scale = scale
         self._size = size
 
@@ -22,15 +23,16 @@ class SimulatorVisualizer:
         self._robot_radius = 2.0
         self._robot_pose = pose_util.Pose2D(0.0, 0.0, 0.0)
 
-    def draw_world(self, obstacles: set[tuple[int, int]]) -> None:
-        for x, y in obstacles:
+    def draw_world(self, world_impl: world.World) -> None:
+        for grid_x, grid_y in world_impl.obstacles():
+            x, y = world_impl.grid_to_world(grid_x, grid_y)
             x0, y0 = self._convert_to_canvas_coodinate(x, y)
             x1, y1 = self._convert_to_canvas_coodinate(x + 1, y + 1)
             self._canvas.create_rectangle(x0, y1, x1, y0, fill="black", outline="")
 
         scale = int(self._scale)
-        width = self._size * scale
-        height = self._size * scale
+        width = int(self._size * scale)
+        height = int(self._size * scale)
         for x in range(0, width, scale):
             self._canvas.create_line(x, 0, x, height * self._scale, fill="light gray")
         for y in range(0, height, scale):

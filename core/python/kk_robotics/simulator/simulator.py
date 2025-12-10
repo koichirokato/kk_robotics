@@ -17,7 +17,7 @@ class Simulator:
         self._robot = robot_impl
         self._vizualizer = vizualizer_impl
 
-        self._vizualizer.draw_world(world_impl.obstacles())
+        self._vizualizer.draw_world(world_impl)
 
     def set_velocity(self, linear_velocity: float, angular_velocity: float) -> None:
         self._robot.set_velocity(linear_velocity, angular_velocity)
